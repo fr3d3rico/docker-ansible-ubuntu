@@ -12,6 +12,8 @@ COPY playbook.yml ./playbook.yml
 
 RUN chmod 0400 private-key.pem
 
+CMD ["bash"]
+
 # RUN service ssh start
 # RUN systemctl enable ssh
 
