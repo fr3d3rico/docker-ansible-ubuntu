@@ -7,12 +7,9 @@ RUN apt install ansible -y
 RUN apt install nano -y
 # RUN apt-get install openssh-server -y
 
-
-
 COPY private-key.pem ./private-key.pem
 
 RUN chmod 0400 private-key.pem
-
 
 # RUN service ssh start
 # RUN systemctl enable ssh

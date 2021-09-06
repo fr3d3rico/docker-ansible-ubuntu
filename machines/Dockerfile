@@ -10,6 +10,8 @@ RUN apt-get install openssh-server -y
 COPY .ssh /root/.ssh
 COPY sshd_config /etc/ssh/sshd_config
 
+RUN rm ~/.ssh/*.pem
+
 RUN chmod    700   ~/.ssh
 RUN chmod 600 ~/.ssh/authorized_keys
 

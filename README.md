@@ -16,21 +16,21 @@ ssh-keygen -E md5 -lf ~/.ssh/id_rsa.pub
 # machine (frederico)
 ssh-keygen -t rsa -b 4096 -f ./id_rsa_shared
 
-ansible-playbook main-remote.yml -i inventory --private-key ansible-key-pair.pem
+
 
 # build images
 
 # cd server
-docker build -t ubuntu-ansible-test1 .
+docker build -t ubuntu-ansible-server .
 
 # cd machines
 # https://linuxaws.wordpress.com/2017/07/17/how-to-generate-pem-file-to-ssh-the-server-without-password-in-linux/
-docker build -t ubuntu-ansible-slave .
+docker build -t ubuntu-ansible-machine .
 
 # run 2 containers
 
-docker run -itd --network=somenetwork --name main-ansible ubuntu-ansible-test1
-docker run -itd --network=somenetwork --name slave-ansible ubuntu-ansible-slave
+docker run -itd --network=somenetwork --name main-ansible ubuntu-ansible-server
+docker run -itd --network=somenetwork --name machine-ansible ubuntu-ansible-machine
 
 
 # start ssh each container
@@ -45,10 +45,62 @@ docker network inspect somenetwork
 
 # edit hosts
 nano etc/ansible/hosts
-add slave ip <172.18.0.3>
+add machine ip <172.18.0.3>
 
 
 
 
+ssh -i private-key.pem root@172.18.0.3
+ansible all -a "/bin/echo hello" --private-key private-key.pem
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 1 - machine
+ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+cp id_rsa.pub authorized_keys
+rename id_rsa private-key.pem
+
+# 2 - build images
+# cd server
+docker build -t ubuntu-ansible-server .
+
+# cd machines
+docker build -t ubuntu-ansible-machine .
+
+# 3 - run 2 containers
+docker run -itd --network=somenetwork --name main-ansible ubuntu-ansible-server
+docker run -itd --network=somenetwork --name machine-ansible ubuntu-ansible-machine
+
+# 4 - docker network inspect somenetwork
+docker network inspect somenetwork
+
+docker ps -a --format "table {{.Names}}" | grep machine
+docker network inspect somenetwork | grep '"IPv4Address"'
+
+# 5 - edit hosts
+nano etc/ansible/hosts
+add machine ip <172.18.0.3>
+
+# 6 - test
 ssh -i private-key.pem root@172.18.0.3
 ansible all -a "/bin/echo hello" --private-key private-key.pem
