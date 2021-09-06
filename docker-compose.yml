@@ -1,0 +1,9 @@
+services:
+  main-machine:
+    build: .
+    # ports:
+    #   - "22:22"
+  slave-machine:
+    build: .
+    # ports:
+    #   - "22:22"
