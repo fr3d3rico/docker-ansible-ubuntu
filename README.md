@@ -97,10 +97,15 @@ docker network inspect somenetwork
 docker ps -a --format "table {{.Names}}" | grep machine
 docker network inspect somenetwork | grep '"IPv4Address"'
 
-# 5 - edit hosts
+docker network inspect somenetwork --format "table {{.Containers}}" | grep '"IPv4Address"'
+docker network inspect somenetwork --format  --format='{{range .NetworkSettings.Networks}}'
+
+# 5 - edit hosts on server
 nano etc/ansible/hosts
 add machine ip <172.18.0.3>
 
 # 6 - test
 ssh -i private-key.pem root@172.18.0.3
 ansible all -a "/bin/echo hello" --private-key private-key.pem
+
+ansible-playbook playbook.yml --private-key private-key.pem

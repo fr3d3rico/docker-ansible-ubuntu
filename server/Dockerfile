@@ -8,6 +8,7 @@ RUN apt install nano -y
 # RUN apt-get install openssh-server -y
 
 COPY private-key.pem ./private-key.pem
+COPY playbook.yml ./playbook.yml
 
 RUN chmod 0400 private-key.pem
 
