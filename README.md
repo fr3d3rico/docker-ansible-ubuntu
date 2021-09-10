@@ -18,7 +18,13 @@ docker build -t ubuntu-ansible-server .
 docker build -t ubuntu-ansible-machine .
 ```
 
-# 3 - Run 1 container for server and 2 containers for machines
+# 3 - Create a new network based on bridge
+
+```
+docker network create -d bridge somenetwork
+```
+
+# 4 - Run 1 container for server and 2 containers for machines
 ```
 docker run -itd --network=somenetwork --name main-ansible ubuntu-ansible-server
 
@@ -26,7 +32,7 @@ docker run -itd --network=somenetwork --name machine-ansible-1 ubuntu-ansible-ma
 docker run -itd --network=somenetwork --name machine-ansible-2 ubuntu-ansible-machine
 ```
 
-# 4 - docker network inspect somenetwork (get ip)
+# 5 - docker network inspect somenetwork (get ip)
 ```
 docker network inspect somenetwork
 
@@ -37,13 +43,13 @@ docker network inspect somenetwork --format "table {{.Containers}}" | grep '"IPv
 docker network inspect somenetwork --format  --format='{{range .NetworkSettings.Networks}}'
 ```
 
-# 5 - Edit hosts on Server with ip
+# 6 - Edit hosts on Server with ip
 ```
 nano etc/ansible/hosts
 ```
 add machine ip <172.18.0.3>
 
-# 6 - How to test? Log in server and try execute for machines
+# 7 - How to test? Log in server and try execute for machines
 ```
 ssh -i private-key.pem root@172.18.0.3
 ansible all -a "/bin/echo hello" --private-key private-key.pem
